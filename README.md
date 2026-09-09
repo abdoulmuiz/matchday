@@ -77,3 +77,4 @@ The frontend will run on `http://localhost:3000`
 - Email verification and password reset links are currently logged to the console (check backend terminal)
 - Email sending will be implemented in a future step
 - The home page is a placeholder showing user info
+# matchday
