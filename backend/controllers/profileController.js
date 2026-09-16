@@ -1,6 +1,5 @@
-const path = require('path');
-const fs = require('fs');
 const User = require('../models/User');
+const { uploadImage, destroyByUrl } = require('../services/cloudinaryService');
 
 const serializeUser = (user) => ({
   id: user.id,
@@ -72,31 +71,35 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// Upload profile picture (real file upload)
+// Upload profile picture → Cloudinary
 const uploadProfilePicture = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No image file provided' });
     }
 
-    const profilePictureUrl = `/uploads/avatars/${req.file.filename}`;
-
-    // Remove previous local avatar if we own it
     const existing = await User.findById(req.user.userId);
-    if (existing?.profile_picture_url?.startsWith('/uploads/avatars/')) {
-      const oldPath = path.join(__dirname, '..', existing.profile_picture_url);
-      fs.promises.unlink(oldPath).catch(() => {});
-    }
 
-    await User.updateProfilePicture(req.user.userId, profilePictureUrl);
+    const uploaded = await uploadImage(req.file, {
+      folder: 'ef-matchday/avatars',
+      publicId: `user-${req.user.userId}-${Date.now()}`,
+    });
+
+    await destroyByUrl(existing?.profile_picture_url);
+
+    await User.updateProfilePicture(req.user.userId, uploaded.url);
 
     res.json({
       message: 'Profile picture updated',
-      profilePictureUrl,
+      profilePictureUrl: uploaded.url,
     });
   } catch (error) {
     console.error('Upload profile picture error:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({
+      error: error.message?.includes('Cloudinary is not configured')
+        ? error.message
+        : 'Server error',
+    });
   }
 };
 

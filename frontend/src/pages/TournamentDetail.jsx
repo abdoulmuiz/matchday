@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '../context/AuthContext'
 import axios from 'axios'
+import { mediaUrl } from '../api'
 import AppShell from '../components/AppShell'
 import PageHeader from '../components/PageHeader'
 import Button from '../components/Button'
@@ -446,7 +447,7 @@ const TournamentDetail = () => {
                       <div className="td-avatar" aria-hidden>
                         {participant.profile_picture_url && !avatarFailed ? (
                           <img
-                            src={participant.profile_picture_url}
+                            src={mediaUrl(participant.profile_picture_url)}
                             alt=""
                             onError={() =>
                               setFailedAvatars((prev) => ({

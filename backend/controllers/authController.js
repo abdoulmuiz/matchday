@@ -50,13 +50,14 @@ const signup = async (req, res) => {
     const verificationToken = await VerificationToken.create(userId);
     const verificationLink = `${frontendUrl()}/verify-email?token=${verificationToken}`;
 
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[DEV] Verification link:', verificationLink);
+    }
+
     try {
       await sendVerificationEmail(email, username, verificationLink);
     } catch (emailError) {
       console.error('Failed to send verification email:', emailError.message);
-      if (process.env.NODE_ENV !== 'production') {
-        console.log('[DEV] Verification link (email send failed):', verificationLink);
-      }
       // Keep account; still return success so user can retry / we can resend later
       return res.status(201).json({
         message:
@@ -221,6 +222,10 @@ const forgotPassword = async (req, res) => {
     // Generate new reset token
     const resetToken = await PasswordResetToken.create(user.id);
     const resetLink = `${frontendUrl()}/reset-password?token=${resetToken}`;
+
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[DEV] Password reset link:', resetLink);
+    }
 
     try {
       await sendPasswordResetEmail(user.email, user.username, resetLink);

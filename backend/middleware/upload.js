@@ -1,21 +1,20 @@
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 
-const screenshotDir = path.join(__dirname, '../uploads/screenshots');
-const avatarDir = path.join(__dirname, '../uploads/avatars');
-const logoDir = path.join(__dirname, '../uploads/branding');
+/**
+ * Memory storage — files are uploaded to Cloudinary from controllers.
+ * Nothing is written under backend/uploads/.
+ */
+const memoryStorage = multer.memoryStorage();
 
-[screenshotDir, avatarDir, logoDir].forEach((dir) => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-});
-
-const fileFilter = (req, file, cb) => {
+const imageFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|webp|gif/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype) || file.mimetype === 'image/webp' || file.mimetype === 'image/gif';
+  const extname = allowedTypes.test(
+    require('path').extname(file.originalname).toLowerCase()
+  );
+  const mimetype =
+    allowedTypes.test(file.mimetype) ||
+    file.mimetype === 'image/webp' ||
+    file.mimetype === 'image/gif';
 
   if (extname && mimetype) {
     cb(null, true);
@@ -24,58 +23,8 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const screenshotStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, screenshotDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, `screenshot-${uniqueSuffix}${ext}`);
-  },
-});
-
-const avatarStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, avatarDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
-    cb(null, `avatar-${req.user.userId}-${uniqueSuffix}${ext}`);
-  },
-});
-
-const upload = multer({
-  storage: screenshotStorage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter,
-});
-
-upload.avatar = multer({
-  storage: avatarStorage,
-  limits: { fileSize: 3 * 1024 * 1024 },
-  fileFilter,
-});
-
-const logoStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, logoDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname).toLowerCase() || '.png';
-    cb(null, `logo-${uniqueSuffix}${ext}`);
-  },
-});
-
-upload.logo = multer({
-  storage: logoStorage,
-  limits: { fileSize: 2 * 1024 * 1024 },
-  fileFilter,
-});
-
 const faviconFilter = (req, file, cb) => {
+  const path = require('path');
   const ext = path.extname(file.originalname).toLowerCase();
   const allowedExt = /\.(jpe?g|png|webp|gif|ico)$/;
   const allowedMime =
@@ -89,19 +38,26 @@ const faviconFilter = (req, file, cb) => {
   }
 };
 
-const faviconStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, logoDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname).toLowerCase() || '.png';
-    cb(null, `favicon-${uniqueSuffix}${ext}`);
-  },
+const upload = multer({
+  storage: memoryStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: imageFilter,
+});
+
+upload.avatar = multer({
+  storage: memoryStorage,
+  limits: { fileSize: 3 * 1024 * 1024 },
+  fileFilter: imageFilter,
+});
+
+upload.logo = multer({
+  storage: memoryStorage,
+  limits: { fileSize: 2 * 1024 * 1024 },
+  fileFilter: imageFilter,
 });
 
 upload.favicon = multer({
-  storage: faviconStorage,
+  storage: memoryStorage,
   limits: { fileSize: 1 * 1024 * 1024 },
   fileFilter: faviconFilter,
 });

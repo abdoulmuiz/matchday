@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Button from '../../components/Button'
 import { useBranding } from '../../context/BrandingContext'
+import { mediaUrl } from '../../api'
 
 const authHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -33,10 +34,12 @@ const AdminBranding = () => {
   }, [faviconUrl])
 
   const applyBranding = (branding) => {
-    setLogoUrl(branding?.logoUrl || null)
-    setFaviconUrl(branding?.faviconUrl || null)
-    setLogoPreview(branding?.logoUrl || null)
-    setFaviconPreview(branding?.faviconUrl || null)
+    const logo = mediaUrl(branding?.logoUrl) || null
+    const favicon = mediaUrl(branding?.faviconUrl) || null
+    setLogoUrl(logo)
+    setFaviconUrl(favicon)
+    setLogoPreview(logo)
+    setFaviconPreview(favicon)
   }
 
   const handleLogoUpload = async (e) => {

@@ -1,7 +1,9 @@
 -- EF MatchDay Database Schema
-
-CREATE DATABASE IF NOT EXISTS ef_matchday;
-USE ef_matchday;
+-- Single schema for local and hosted MySQL.
+-- Create/select the database first, then import this file:
+--   Local:  mysql -u root -e "CREATE DATABASE IF NOT EXISTS ef_matchday;"
+--           mysql -u root ef_matchday < database/schema.sql
+--   Hosted: create DB in panel → select it in phpMyAdmin → Import this file
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (

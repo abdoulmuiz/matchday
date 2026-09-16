@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import axios from 'axios'
+import { mediaUrl } from '../api'
 import AppShell from '../components/AppShell'
 import PageHeader from '../components/PageHeader'
 import Button from '../components/Button'
@@ -367,7 +368,7 @@ const MatchDetail = () => {
         >
           {picture ? (
             <img
-              src={picture}
+              src={mediaUrl(picture)}
               alt={username}
               style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
             />
@@ -768,7 +769,7 @@ const MatchDetail = () => {
                       {player1}&apos;s screenshot
                     </p>
                     <img
-                      src={match.player_1_screenshot_url}
+                      src={mediaUrl(match.player_1_screenshot_url)}
                       alt={`${player1} screenshot`}
                       style={{
                         width: '100%',
@@ -785,7 +786,7 @@ const MatchDetail = () => {
                         e.currentTarget.style.borderColor = 'var(--border-subtle)'
                         e.currentTarget.style.transform = 'scale(1)'
                       }}
-                      onClick={() => window.open(match.player_1_screenshot_url, '_blank')}
+                      onClick={() => window.open(mediaUrl(match.player_1_screenshot_url), '_blank')}
                     />
                   </div>
                 )}
@@ -795,7 +796,7 @@ const MatchDetail = () => {
                       {player2}&apos;s screenshot
                     </p>
                     <img
-                      src={match.player_2_screenshot_url}
+                      src={mediaUrl(match.player_2_screenshot_url)}
                       alt={`${player2} screenshot`}
                       style={{
                         width: '100%',
@@ -812,7 +813,7 @@ const MatchDetail = () => {
                         e.currentTarget.style.borderColor = 'var(--border-subtle)'
                         e.currentTarget.style.transform = 'scale(1)'
                       }}
-                      onClick={() => window.open(match.player_2_screenshot_url, '_blank')}
+                      onClick={() => window.open(mediaUrl(match.player_2_screenshot_url), '_blank')}
                     />
                   </div>
                 )}

@@ -2,7 +2,7 @@ const Match = require('../models/Match');
 const Tournament = require('../models/Tournament');
 const Notification = require('../models/Notification');
 const { extractScoreFromScreenshot } = require('../services/aiService');
-const path = require('path');
+const { uploadImage } = require('../services/cloudinaryService');
 
 // Get single match
 const getMatch = async (req, res) => {
@@ -86,13 +86,15 @@ const submitResult = async (req, res) => {
       return res.status(400).json({ error: 'You have already submitted a result' });
     }
 
-    // Store screenshot URL
-    const screenshotUrl = `/uploads/screenshots/${req.file.filename}`;
+    const uploaded = await uploadImage(req.file, {
+      folder: 'ef-matchday/screenshots',
+      publicId: `match-${id}-p${playerNumber}-${Date.now()}`,
+    });
+    const screenshotUrl = uploaded.url;
     await Match.updateScreenshot(id, playerNumber, screenshotUrl);
 
-    // Extract score using AI
-    const imagePath = path.join(__dirname, '../uploads/screenshots', req.file.filename);
-    const extractedScore = await extractScoreFromScreenshot(imagePath);
+    // Extract score using AI (from in-memory buffer; OCR optional)
+    const extractedScore = await extractScoreFromScreenshot(req.file.buffer);
     
     // Store reported score
     await Match.updateReportedScore(id, playerNumber, extractedScore);
@@ -127,7 +129,11 @@ const submitResult = async (req, res) => {
     });
   } catch (error) {
     console.error('Submit result error:', error);
-    res.status(500).json({ error: 'Server error during result submission' });
+    res.status(500).json({
+      error: error.message?.includes('Cloudinary is not configured')
+        ? error.message
+        : 'Server error during result submission',
+    });
   }
 };
 

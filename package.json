@@ -1,0 +1,16 @@
+{
+  "name": "ef-matchday",
+  "private": true,
+  "version": "1.0.0",
+  "description": "EF MatchDay — eFootball 1v1 tournament platform",
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c green,cyan \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "build": "npm run build --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

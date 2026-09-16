@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { mediaUrl } from '../api'
 import { motion } from 'framer-motion'
 import AppShell from '../components/AppShell'
 import BrandMark from '../components/BrandMark'
@@ -39,11 +40,11 @@ const CompleteProfile = () => {
             city: user.city || '',
             platform: user.platform || '',
           })
-          setPreviewUrl(user.profilePictureUrl || null)
+          setPreviewUrl(mediaUrl(user.profilePictureUrl) || null)
           setIsEditing(true)
         } else if (user.profilePictureUrl) {
           setFormData((prev) => ({ ...prev, profile_picture_url: user.profilePictureUrl }))
-          setPreviewUrl(user.profilePictureUrl)
+          setPreviewUrl(mediaUrl(user.profilePictureUrl))
         }
       } catch (error) {
         console.error('Error fetching profile:', error)
@@ -100,7 +101,7 @@ const CompleteProfile = () => {
         ...prev,
         profile_picture_url: response.data.profilePictureUrl,
       }))
-      setPreviewUrl(response.data.profilePictureUrl)
+      setPreviewUrl(mediaUrl(response.data.profilePictureUrl))
     } catch (error) {
       setErrors({
         ...errors,

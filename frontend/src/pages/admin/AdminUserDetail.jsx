@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
+import { mediaUrl } from '../../api'
 import Button from '../../components/Button'
 
 const authHeaders = () => ({
@@ -90,7 +91,7 @@ const AdminUserDetail = () => {
         <div className="admin-user-hero">
           <div className="admin-list__avatar admin-list__avatar--lg" aria-hidden>
             {user.profilePictureUrl ? (
-              <img src={user.profilePictureUrl} alt="" />
+              <img src={mediaUrl(user.profilePictureUrl)} alt="" />
             ) : (
               <span>{(user.username || '?').charAt(0).toUpperCase()}</span>
             )}

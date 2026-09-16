@@ -13,14 +13,19 @@ A web app for organizing eFootball 1v1 tournaments.
 
 ### 1. Database Setup
 
-1. Start your MySQL server (if using XAMPP, start MySQL from the XAMPP Control Panel)
-2. Import the database schema:
+1. Start MySQL (XAMPP: `sudo /opt/lampp/lampp startmysql`, or use the XAMPP Control Panel)
+2. Create the database and import the schema (first time only):
    ```bash
-   mysql -u root -p < database/schema.sql
+   /opt/lampp/bin/mysql -u root -e "CREATE DATABASE IF NOT EXISTS ef_matchday;"
+   /opt/lampp/bin/mysql -u root ef_matchday < database/schema.sql
    ```
-   Or use phpMyAdmin to import `database/schema.sql`
+   Or in phpMyAdmin: create/select `ef_matchday`, then import `database/schema.sql`
 
-3. Update database credentials in `backend/.env` if needed:
+3. Copy env files if missing, then adjust credentials:
+   ```bash
+   cp backend/.env.example backend/.env
+   cp frontend/.env.example frontend/.env
+   ```
    ```
    DB_HOST=localhost
    DB_USER=root
@@ -28,25 +33,21 @@ A web app for organizing eFootball 1v1 tournaments.
    DB_NAME=ef_matchday
    ```
 
-### 2. Backend Setup
+### 2. Install & run (recommended)
+
+From the project root:
 
 ```bash
-cd backend
 npm install
+npm run install:all
 npm run dev
 ```
 
-The backend will run on `http://localhost:5000`
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:5000`
+- Health check: `http://localhost:5000/api/health`
 
-### 3. Frontend Setup
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-The frontend will run on `http://localhost:3000`
+Or run services separately: `npm run dev:backend` / `npm run dev:frontend`.
 
 ## Features Implemented
 
@@ -74,7 +75,16 @@ The frontend will run on `http://localhost:3000`
 
 ## Development Notes
 
-- Email verification and password reset links are currently logged to the console (check backend terminal)
-- Email sending will be implemented in a future step
-- The home page is a placeholder showing user info
+- In development, verification and password-reset links are always printed in the backend terminal (`[DEV] ...`)
+- Resend only delivers to allowed addresses until a domain is verified (see `backend/.env`)
+- Screenshot OCR needs `GOOGLE_APPLICATION_CREDENTIALS`; without it, use direct score entry
+- The home page shows recent tournaments for the signed-in user
+
+## Production deploy
+
+See **[DEPLOY.md](./DEPLOY.md)** for Render (API) + Vercel (frontend) + MySQL setup, env var checklists, InfinityFree caveats, and the Cloudinary upload warning.
+# matchday
+# matchday
+# matchday
+# matchday
 # matchday

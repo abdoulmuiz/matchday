@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+import { mediaUrl } from '../../api'
 import Button from '../../components/Button'
 
 const authHeaders = () => ({
@@ -78,7 +79,7 @@ const AdminUsers = () => {
             <Link key={u.id} to={`/admin/users/${u.id}`} className="admin-list__row">
               <div className="admin-list__avatar" aria-hidden>
                 {u.profilePictureUrl ? (
-                  <img src={u.profilePictureUrl} alt="" />
+                  <img src={mediaUrl(u.profilePictureUrl)} alt="" />
                 ) : (
                   <span>{(u.username || '?').charAt(0).toUpperCase()}</span>
                 )}

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import axios from 'axios'
+import { mediaUrl } from '../api'
 import AppShell from '../components/AppShell'
 import PageHeader from '../components/PageHeader'
 import BottomNav from '../components/BottomNav'
@@ -32,7 +33,7 @@ const PlayerRow = ({ name, picture, score, isWinner, isLoser }) => {
     >
       <div className="bk-player__avatar" aria-hidden>
         {picture ? (
-          <img src={picture} alt="" />
+          <img src={mediaUrl(picture)} alt="" />
         ) : (
           <span>{initial}</span>
         )}

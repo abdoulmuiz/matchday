@@ -175,46 +175,45 @@ const getBranding = async (req, res) => {
 
 const uploadLogo = async (req, res) => {
   try {
-    const path = require('path');
-    const fs = require('fs');
     const SiteSettings = require('../models/SiteSettings');
+    const { uploadImage, destroyByUrl } = require('../services/cloudinaryService');
 
     if (!req.file) {
       return res.status(400).json({ error: 'No image file provided' });
     }
 
-    const logoUrl = `/uploads/branding/${req.file.filename}`;
     const previous = await SiteSettings.get('logo_url');
+    const uploaded = await uploadImage(req.file, {
+      folder: 'ef-matchday/branding',
+      publicId: `logo-${Date.now()}`,
+    });
 
-    if (previous && previous.startsWith('/uploads/branding/logo-')) {
-      const oldPath = path.join(__dirname, '..', previous);
-      fs.promises.unlink(oldPath).catch(() => {});
-    }
+    await destroyByUrl(previous);
+    await SiteSettings.set('logo_url', uploaded.url);
 
-    await SiteSettings.set('logo_url', logoUrl);
     res.json({
       message: 'Logo updated',
       branding: await SiteSettings.getBranding(),
     });
   } catch (error) {
     console.error('Admin upload logo error:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({
+      error: error.message?.includes('Cloudinary is not configured')
+        ? error.message
+        : 'Server error',
+    });
   }
 };
 
 const resetLogo = async (req, res) => {
   try {
-    const path = require('path');
-    const fs = require('fs');
     const SiteSettings = require('../models/SiteSettings');
+    const { destroyByUrl } = require('../services/cloudinaryService');
 
     const previous = await SiteSettings.get('logo_url');
-    if (previous && previous.startsWith('/uploads/branding/logo-')) {
-      const oldPath = path.join(__dirname, '..', previous);
-      fs.promises.unlink(oldPath).catch(() => {});
-    }
-
+    await destroyByUrl(previous);
     await SiteSettings.set('logo_url', null);
+
     res.json({
       message: 'Logo reset to default',
       branding: await SiteSettings.getBranding(),
@@ -227,46 +226,45 @@ const resetLogo = async (req, res) => {
 
 const uploadFavicon = async (req, res) => {
   try {
-    const path = require('path');
-    const fs = require('fs');
     const SiteSettings = require('../models/SiteSettings');
+    const { uploadImage, destroyByUrl } = require('../services/cloudinaryService');
 
     if (!req.file) {
       return res.status(400).json({ error: 'No favicon file provided' });
     }
 
-    const faviconUrl = `/uploads/branding/${req.file.filename}`;
     const previous = await SiteSettings.get('favicon_url');
+    const uploaded = await uploadImage(req.file, {
+      folder: 'ef-matchday/branding',
+      publicId: `favicon-${Date.now()}`,
+    });
 
-    if (previous && previous.startsWith('/uploads/branding/favicon-')) {
-      const oldPath = path.join(__dirname, '..', previous);
-      fs.promises.unlink(oldPath).catch(() => {});
-    }
+    await destroyByUrl(previous);
+    await SiteSettings.set('favicon_url', uploaded.url);
 
-    await SiteSettings.set('favicon_url', faviconUrl);
     res.json({
       message: 'Favicon updated',
       branding: await SiteSettings.getBranding(),
     });
   } catch (error) {
     console.error('Admin upload favicon error:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({
+      error: error.message?.includes('Cloudinary is not configured')
+        ? error.message
+        : 'Server error',
+    });
   }
 };
 
 const resetFavicon = async (req, res) => {
   try {
-    const path = require('path');
-    const fs = require('fs');
     const SiteSettings = require('../models/SiteSettings');
+    const { destroyByUrl } = require('../services/cloudinaryService');
 
     const previous = await SiteSettings.get('favicon_url');
-    if (previous && previous.startsWith('/uploads/branding/favicon-')) {
-      const oldPath = path.join(__dirname, '..', previous);
-      fs.promises.unlink(oldPath).catch(() => {});
-    }
-
+    await destroyByUrl(previous);
     await SiteSettings.set('favicon_url', null);
+
     res.json({
       message: 'Favicon removed',
       branding: await SiteSettings.getBranding(),

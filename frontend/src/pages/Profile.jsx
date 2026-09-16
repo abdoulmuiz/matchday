@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuth } from '../context/AuthContext'
 import axios from 'axios'
+import { mediaUrl } from '../api'
 import AppShell from '../components/AppShell'
 import Button from '../components/Button'
 import BottomNav from '../components/BottomNav'
@@ -113,7 +114,7 @@ const Profile = () => {
             <div className="pf-avatar" aria-hidden>
               {profile?.profilePictureUrl && !avatarFailed ? (
                 <img
-                  src={profile.profilePictureUrl}
+                  src={mediaUrl(profile.profilePictureUrl)}
                   alt=""
                   onError={() => setAvatarFailed(true)}
                 />

@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import axios from 'axios'
+import { mediaUrl } from '../api'
 
 const BrandingContext = createContext({
   logoUrl: null,
@@ -47,8 +48,8 @@ export const BrandingProvider = ({ children }) => {
     try {
       const res = await axios.get('/api/settings/branding')
       const branding = res.data.branding || {}
-      setLogoUrl(branding.logoUrl || null)
-      setFaviconUrl(branding.faviconUrl || null)
+      setLogoUrl(mediaUrl(branding.logoUrl) || null)
+      setFaviconUrl(mediaUrl(branding.faviconUrl) || null)
     } catch (error) {
       console.error('Failed to load branding:', error)
     } finally {
